@@ -10,12 +10,15 @@ const login = require('./login');
 const registro = require('./registro');
 const { obtenerUsuarios, eliminarUsuario } = require('./usuarios');
 const validar = require('./validar');
+const connection = require('./conexion')
 const saltRounds = 10;
-mysql://root:ynWcYmmyjUtYvFpLdYVAIokGkOSVqNgy@viaduct.proxy.rlwy.net:53263/railway
+const MySQLStore = require('express-mysql-session')(session);
+
 app.use(cors({
   origin: process.env.URLFRONTEND || 'http://localhost:5173',
   credentials: true
 }))
+const sessionStore = new MySQLStore({}/* session store options */, connection);
 
 app.use(session({
   secret: process.env.SECRETSESSION || 'asdlfkfso3234o23lsdflasdfasdfasdfoasdf',
@@ -23,7 +26,8 @@ app.use(session({
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'none'
-  }
+  },
+  store: sessionStore
 }))
 
 app.get('/', (req, res) => {
